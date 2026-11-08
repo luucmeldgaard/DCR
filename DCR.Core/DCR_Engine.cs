@@ -59,6 +59,11 @@ namespace DCR.Core
                 .ToList();
         }
 
+        public List<Activity> GetTimeBlockedConditions()
+        {
+            return ruleEngine.GetTimeBlockedConditions();
+        }
+
         public ActivityResult Execute(Activity activity)
         {
             // Make sure, that the acitivity is an option in the current state of the DCR-graph
@@ -157,7 +162,7 @@ namespace DCR.Core
         public static string FormatTimeLeft(DCR_Engine graph, Activity activity)
         {
             TimeSpan? left = graph.rules
-                .Where(rule => rule.Type == RuleType.RESPONSE && rule.Target.Id == activity.Id)
+                .Where(rule => (rule.Type == RuleType.RESPONSE || rule.Type == RuleType.CONDITION) && rule.Target.Id == activity.Id)
                 .Select(rule => rule.TimeLeft())
                 .Min();
 

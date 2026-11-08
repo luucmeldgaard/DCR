@@ -78,7 +78,7 @@ namespace DCR
                     count += 1;
                 }
 
-                // Activities that are pending and included, men cannot be executed yet due to constraints
+                // Activities that are pending and included, but cannot be executed yet due to constraints
                 List<Activity> blockedPendingActivities = graph.activities.Values
                     .Where(activity => graph.IsPending(activity.Id)
                                     && graph.IsIncluded(activity.Id)
@@ -92,6 +92,17 @@ namespace DCR
                     foreach (Activity activity in blockedPendingActivities)
                     {
                         Console.WriteLine($"   - {activity.Name}{DCR_Engine.FormatTimeLeft(graph, activity)}  (BLOCKED)");
+                    }
+                }
+
+                List<Activity> blockedTimedConditions = graph.GetTimeBlockedConditions();
+                if (blockedTimedConditions.Count > 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Blocked timed activities:");
+                    foreach (Activity activity in blockedTimedConditions)
+                    {
+                        Console.WriteLine($"   - {activity.Name} [Available in {DCR_Engine.FormatTimeLeft(graph, activity)}]");
                     }
                 }
 

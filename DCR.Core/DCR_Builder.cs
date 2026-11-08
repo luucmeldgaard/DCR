@@ -58,7 +58,7 @@ namespace DCR.Core
                 var cancel = order.AddActivity("Cancel order", Methods.TestMethod2, included: true);
 
                 // Pick flowers
-                order.AddRule(pickFlowers, makeBouquet, RuleType.CONDITION);
+                order.AddRule(pickFlowers, makeBouquet, RuleType.CONDITION, duration: TimeSpan.FromSeconds(5));
                 //order.AddRule(pickFlowers, makeBouquet, RuleType.RESPONSE);
 
                 // Make bouquet

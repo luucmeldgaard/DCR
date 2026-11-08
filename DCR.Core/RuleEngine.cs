@@ -87,7 +87,7 @@ namespace DCR.Core
             }
         }
 
-        // First type of rules, that revovles around constraints
+        // First type of rules: constraints on the graph
         private bool ConstraintsCheck(Rule rule)
         {
             switch (rule.Type)
@@ -102,7 +102,7 @@ namespace DCR.Core
             return true;
         }
 
-        // second type of rules, that revolves around effects on the graph. 
+        // second type of rules: effects on the graph. 
         private void ExecuteEffect(Rule rule)
         {
             switch (rule.Type)
@@ -154,11 +154,35 @@ namespace DCR.Core
             return false;
         }
 
+        public List<Activity> GetTimeBlockedConditions()
+        {
+            List<Activity> conditionBlockedList = [];
+            foreach (List<Rule> list in this.incomingRules.Values)
+            {
+                foreach (Rule rule in list
+                    .Where( r => r.Type == RuleType.CONDITION && 
+                            r.Deadline is not null && 
+                            statuses.Executed.Contains(r.Source.Id) &&
+                            !statuses.Executed.Contains(r.Target.Id))
+                    )
+                {
+                    conditionBlockedList.Add(rule.Target);
+                }
+            }
+            return conditionBlockedList;
+        }
+
+
         private bool Condition(Rule rule)
         {
             if (rule.Type != RuleType.CONDITION) throw new Exception("Rule type must be CONDITION");
             if (!statuses.Included.Contains(rule.Source.Id)) return true;
             if (!statuses.Executed.Contains(rule.Source.Id)) return false;
+
+            if (rule.Duration is not null && rule.Deadline is null) 
+            {
+                rule.Deadline = DateTime.Now + rule.Duration.Value;
+            }
 
             TimeSpan? left = rule.TimeLeft();
             return left is null || left <= TimeSpan.Zero;
