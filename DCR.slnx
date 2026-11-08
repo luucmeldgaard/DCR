@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="DCR.Core/DCR.Core.csproj" />
+  <Project Path="DCR.Tests/DCR.Tests.csproj" />
+  <Project Path="DCR/DCR.csproj" />
+</Solution>
